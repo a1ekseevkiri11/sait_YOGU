@@ -1,0 +1,23 @@
+{% extends "showcase_projects/base.html" %}
+{% block content %}
+<h2 class="account-heading">{{ user.username }}</h2>
+{% if projects %}
+    {% for project in projects %}
+        {% include "showcase_projects/project_card.html" %}
+        {% for letter in letters %}
+            {% if letter.project == project %}
+                <p>Письмо от студента: {{ letter.student.user.username }}</p>
+                <button class="download-letter-btn" data-letter-id="{{ letter.id }}" username="{{ letter.student.user.username }}">Скачать письмо</button>
+                <form class="statusForm" method="post" action="{% url 'profileLecturer' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="letter_id" value="{{ letter.id }}">
+                    <br>
+                    <button type="submit" name="accept">Принять</button>
+                    <button type="submit" name="reject">Отклонить</button>
+                </form>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+
+{% endblock content %}

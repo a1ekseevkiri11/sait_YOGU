@@ -1,0 +1,117 @@
+version: '3'
+
+services:
+
+  redis:
+    image: redis
+    restart: always
+    hostname: redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+  db:
+    image: postgres:14.6-alpine
+    environment:
+      - POSTGRES_DB=pgdb2
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+     
+  web:
+    build: 
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=pgdb2
+      - DB_USER=user
+      - DB_PASSWORD=password
+    command: python manage.py runserver 0.0.0.0:8000
+    
+    depends_on:
+      - db
+
+  beat:
+    build:
+      context: .
+    hostname: beat
+    entrypoint: celery
+    command: -A projects_website.celery_app beat --loglevel=info
+    volumes:
+      - ./services:/services
+    environment:
+      - DB_HOST=db
+      - DB_NAME=pgdb2
+      - DB_USER=user
+      - DB_PASSWORD=password
+    links:
+      - redis
+      - db
+    depends_on:
+      - redis
+      - db
+  
+  worker:
+    build:
+      context: .
+    hostname: worker
+    entrypoint: celery
+    command: -A projects_website.celery_app worker --loglevel=info
+    volumes:
+      - ./services:/services
+    environment:
+      - DB_HOST=db
+      - DB_NAME=pgdb2
+      - DB_USER=user
+      - DB_PASSWORD=password
+    links:
+      - redis
+      - db
+    depends_on:
+      - redis
+      - db
+  
+  flower:
+    build:
+      context: .
+    hostname: flower
+    entrypoint: celery
+    command: -A projects_website.celery_app flower
+    volumes:
+      - ./services:/services
+    links:
+      - redis
+      - db
+    depends_on:
+      - redis
+      - db
+    ports:
+      - "5555:5555"
+    
+
+
+
+volumes:
+  pgdbdata:
+    driver: local
+    driver_opts:
+      type: none
+      device: C:\Users\79828\Desktop\sait_YOGU\postgresql_data_base
+      o: bind
+
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: C:\Users\79828\Desktop\sait_YOGU\redis_data_base
+      o: bind
+
+
+

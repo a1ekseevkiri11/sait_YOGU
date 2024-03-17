@@ -1,0 +1,100 @@
+{% extends "showcase_projects/base.html" %}
+
+{% block title %}Пост{% endblock %}
+
+{% block content %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <h5 class="card-title">  {{ project.title }}</h5>
+            <p class="card-text">Количество свободных мест: {{ countFreePlace }}/{{ project.place }}</p>
+            <p class="card-text">Заказчик:
+                <a href="{% url 'project-user' project.customer.user.username %}" class="card-text">{{ project.customer.user.username }}</a>
+            </p>
+            {% if project.participation_set.all|length > 0 %}
+                <p>Участники проекта</p>
+                {% for participation in project.participation_set.all %}
+                    <li>{{ participation.student }}</li>
+                {% endfor %}
+            {% endif %}
+            <br>
+        </div>
+    </div>
+    
+    {% if user.is_authenticated %}
+        {% if studentInThisProject %}
+        <h3>
+            <button type="button"  class="btn btn-danger" data-toggle="modal" data-target="#confirmationModal">
+                Выйти из проекта
+            </button>
+        </h3>
+        {% elif studentInProject  %}
+        <h3>
+            Вы учавствуете в другом проекте
+        </h3>
+        {% elif participationProject %}
+
+            {% if motivation_form %}
+                <form method="post" action="{% url 'project-detail' pk=project.pk %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_motivation_letter" value="true">
+                    {{ motivation_form }}
+                    <button type="submit">Отправить</button>
+                </form>
+            {% endif %}
+            
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmationModal">
+                Присоединиться к проекту
+            </button>
+
+        {% endif %}
+        <!-- Всплывающее окно -->
+        <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Подтверждение</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% if studentInThisProject %}
+                            <p>Вы уверены, что хотите выйти из проекта?</p>
+                        {% else %}
+                            <p>Вы уверены, что хотите присоединиться к проекту?</p>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" action="{% url 'project-detail' pk=project.pk %}">
+                            {% csrf_token %}
+
+                            {% if studentInThisProject %}
+                                <input type="hidden" name="delete_partition" value="true">
+                            {% else %}
+                                <input type="hidden" name="add_partition" value="true">
+                            {% endif %}
+
+                            <input type="hidden" name="confirmation" value="true">
+                            <button type="submit" class="btn btn-primary">Да</button>
+                        </form>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if project.customer == user.profile %}
+        <h3>{{ project.get_status_display }}</h3>
+        {% if project.rejection_comment %}
+            <p>Комментарий: {{ project.rejection_comment.comment }}</p>
+        {% endif %}
+        <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'project-update' project.id %}">Редактировать</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'project-delete' project.id %}">Удалить</a>
+        </div>
+    {% endif %}
+</article>
+
+{% endblock content %}

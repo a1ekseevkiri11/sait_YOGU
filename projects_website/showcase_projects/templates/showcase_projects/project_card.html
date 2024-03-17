@@ -1,0 +1,12 @@
+<div class="col-md-4 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ project.title }}</h5>
+            <p class="card-text">Кол-во мест: {{ project.place }}</p>
+            <p class="card-text">Заказчик:
+                <a href="{% url 'project-user' project.customer.user.username %}" class="card-text">{{ project.customer.user.username }}</a>
+            </p>
+            <a href="{% url 'project-detail' project.id %}" class="btn btn-info">Подробнее</a>
+        </div>
+    </div>
+</div>

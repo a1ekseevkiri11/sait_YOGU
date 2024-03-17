@@ -1,0 +1,27 @@
+{% extends "showcase_projects/base.html" %}
+{% block content %}
+<h2 class="account-heading">{{ user.username }}</h2>
+{% if project %}
+    <h3>Вы учавствуете в проекте:</h3>
+    {% include "showcase_projects/project_card.html" %}
+{% endif %}
+
+{% if letters %}
+    <hr>
+    <h3>Мои мотивационные письма</h3>
+    {% for letter in letters %}
+        <p>Письмо к проекту: 
+            <a href="{% url 'project-detail' letter.project.id %}">{{ letter.project.title }}</a>
+        </p>
+        <button class="download-letter-btn" data-letter-id="{{ letter.id }}" username="{{ letter.student.user.username }}">Скачать письмо</button>
+        {% if buttonDeleteMotivationLetter %}
+            <form method="post" action="{% url 'profileStudent'  %}">
+                {% csrf_token %}
+                <input type="hidden" name="letter_id" value="{{ letter.id }}">
+                <input type="hidden" name="delete_motivation_letter" value="true">
+                <button type="submit" class="btn btn-primary">Удалить</button>
+            </form>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{% endblock content %}
