@@ -85,7 +85,7 @@
         </div>
     {% endif %}
     
-    {% if project.customer == user.profile %}
+    {% if project.customer == user.customer %}
         <h3>{{ project.get_status_display }}</h3>
         {% if project.rejection_comment %}
             <p>Комментарий: {{ project.rejection_comment.comment }}</p>

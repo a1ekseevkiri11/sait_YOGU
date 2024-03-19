@@ -76,7 +76,7 @@
                     var url = window.URL.createObjectURL(xhr.response);
                     var a = document.createElement('a');
                     a.href = url;
-                    a.download = username + ' мотивационное письмо.docx'; // Замените на нужное имя файла
+                    a.download = username + ' мотивационное письмо.docx';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);

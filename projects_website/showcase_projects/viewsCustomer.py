@@ -15,7 +15,7 @@ from .models import (
     Project, 
 )
 
-from .pernission import (
+from .permission import (
     canAddProject,
 )
 
@@ -30,7 +30,7 @@ class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        form.instance.customer = self.request.user.profile
+        form.instance.customer = self.request.user.customer
         return super().form_valid(form)
     
     def test_func(self):
@@ -44,15 +44,15 @@ class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        form.instance.customer = self.request.user.profile
+        form.instance.customer = self.request.user.customer
         form.save()
         post = self.get_object()
         post.set_status('processing')
         return redirect(self.success_url)
 
     def test_func(self):
-        post = self.get_object()
-        return self.request.user.profile == post.customer
+        project = self.get_object()
+        return self.request.user.customer == project.customer
     
     
 
@@ -62,5 +62,5 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('home')
 
     def test_func(self):
-        post = self.get_object()
-        return self.request.user.profile == post.customer
+        project = self.get_object()
+        return self.request.user.customer == project.customer

@@ -14,7 +14,7 @@ from django.http import (
 
 
 from registration.models import(
-    Profile
+    Customer
 )
 
 
@@ -30,7 +30,7 @@ from .models import (
     MotivationLetters,
 )
 
-from .pernission import (
+from .permission import (
     canAddParticipation,
     canDeleteParticipation,
     canAddProject,
@@ -73,21 +73,23 @@ class ProjectDetailView(DetailView, UserPassesTestMixin):
         if not self.request.user.is_authenticated:
             return context
         
-        student =  self.request.user.profile
-        if canAddParticipation(self.request.user):
-            context['participationProject'] = project.freePlaces()
-            context['studentInProject'] = Participation.objects.filter(student=student).exists()
-            context['studentInThisProject'] = project.studentInThisProject(student)
-        
-        if canAddMotivationLetters(self.request.user):
-            context['motivation_form'] =  MotivationLettersForm()
+        if self.request.user.groups.filter(name='student').exists():
+
+            if canAddParticipation(self.request.user):
+                student =  self.request.user.student
+                context['participationProject'] = project.freePlaces()
+                context['studentInProject'] = Participation.objects.filter(student=student).exists()
+                context['studentInThisProject'] = project.studentInThisProject(student)
+            
+            if canAddMotivationLetters(self.request.user):
+                context['motivation_form'] =  MotivationLettersForm()
             
         return context
     
     def post(self, request, *args, **kwargs):
         project = self.get_object()
         user = self.request.user
-        student = user.profile
+        student = user.student
     
         if 'add_partition' in request.POST:
             if canAddParticipation(user):
@@ -110,8 +112,14 @@ class ProjectDetailView(DetailView, UserPassesTestMixin):
         return redirect(request.path)
     
     def test_func(self):
+        if self.request.user.groups.filter(name='administrator').exists():
+            return True
+        
         project = self.get_object()
-        status = project.get_status('accepted')
+        if self.request.user.custome == project.customer:
+            return True
+        
+        status = project.get_status()
         return status == 'accepted'
 
 
@@ -121,7 +129,7 @@ class ProjectCustomerListView(ListView):
     context_object_name = 'projects'
 
     def get_queryset(self):
-        user = get_object_or_404(Profile, user__username=self.kwargs.get('username'))
+        user = get_object_or_404(Customer, user__username=self.kwargs.get('username'))
         return Project.objects.filter(customer=user)
     
 

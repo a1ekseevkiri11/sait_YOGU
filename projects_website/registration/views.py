@@ -2,8 +2,10 @@ from django.contrib.auth.mixins import (
     UserPassesTestMixin
 )
 
-from registration.models import(
-    Profile
+from .models import(
+    Lecturer,
+    Customer,
+    Student
 )
 
 from django.views.generic import (
@@ -19,7 +21,6 @@ from django.shortcuts import (
 )
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Profile
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
@@ -29,7 +30,7 @@ from showcase_projects.models import (
     MotivationLetters,
 )
 
-from showcase_projects.pernission import (
+from showcase_projects.permission import (
     canAddProject,
     canChangeStatusMotivationLetters,
     canDeleteMotivationLetters
@@ -70,17 +71,18 @@ class CustomerProfile(ListView, UserPassesTestMixin):
         return context
     
     def get_queryset(self):
-        user = get_object_or_404(Profile, user__username=self.request.user.username)
+        user = get_object_or_404(Customer, user__username=self.request.user.username)
         return Project.objects.filter(customer=user)
     
     def test_func(self):
         return self.request.user.groups.filter(name='customer').exists()
     
 
+
 class LecturerProfile(View, LoginRequiredMixin):
 
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(Profile, user__username=self.request.user.username)
+        user = get_object_or_404(Lecturer, user__username=self.request.user.username)
         projects = Project.objects.filter(lecturer=user)
         letters = MotivationLetters.objects.filter(project__in=projects, status='processing')
         context = {'projects' : projects, 'letters': letters}
@@ -94,7 +96,7 @@ class LecturerProfile(View, LoginRequiredMixin):
             letter = MotivationLetters.objects.get(id=letter_id)
             if 'accept' in request.POST:
                 letter.set_status('accepted')  
-                letter.project.addStudent(letter.student.user.profile)
+                letter.project.addStudent(letter.student.user.student)
             
             if 'reject' in request.POST:
                 letter.set_status('rejected')
@@ -114,11 +116,11 @@ class StudentProfile(View, LoginRequiredMixin):
         user = self.request.user
         project = None
         try:
-            participation = Participation.objects.get(student=user.profile)
+            participation = Participation.objects.get(student=user.student)
             project = participation.project
         except:
             pass
-        letters = MotivationLetters.objects.filter(student=user.profile)
+        letters = MotivationLetters.objects.filter(student=user.student)
         buttonDeleteMotivationLetter = canDeleteMotivationLetters(user)
         context = {'project' : project, 'letters': letters, 'buttonDeleteMotivationLetter': buttonDeleteMotivationLetter,}
         return render(request, 'registration/profileStudent.html', context)
@@ -136,5 +138,3 @@ class StudentProfile(View, LoginRequiredMixin):
     
     def test_func(self):
         return self.request.user.groups.filter(name='student').exists()
-
-
