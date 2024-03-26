@@ -34,6 +34,15 @@ class Project(ModelWithStatus):
         permissions = [
             ("change_status_project", "Can change status project"),
         ]
+
+    CUSTOMER_TYPE = [
+        ('Внешний'),
+        ('Внутренний'),
+    ]
+
+
+
+    
     title = models.CharField(max_length=100)
     place = models.IntegerField(default=6)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
@@ -85,6 +94,11 @@ class Project(ModelWithStatus):
 
     def __str__(self):
         return self.title
+
+
+# Сделать таблички для остальных параметров проекта
+
+
     
 
 

@@ -24,6 +24,8 @@ from django.views.generic import (
     View
 )
 
+from django.db.models import Q
+
 from .models import (
     Project, 
     Participation,
@@ -45,19 +47,28 @@ from .forms import (
     MotivationLettersForm,
 )
 
+from .filters import ProjectFilter
 
 
 class ProjectListView(ListView):
     model = Project
     template_name = 'showcase_projects/home.html' 
     context_object_name = 'projects'
+    paginate_by = 1
 
-    def get_queryset(self):
-        return Project.objects.filter(status='accepted')
+    def get_queryset(self): 
+        query = self.request.GET.get('q')
+        project_list = Project.objects.filter(status='accepted')
+        if query != None:
+            project_list = project_list.filter(
+                Q(title__icontains=query)
+            )
+        return project_list
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['showButtonCreateProject'] = canAddProject(self.request.user)
+        projectFilter = ProjectFilter(self.request.GET, queryset=Project.objects.filter(status='accepted'))
+        context['projectFilter'] = projectFilter
         return context
     
 

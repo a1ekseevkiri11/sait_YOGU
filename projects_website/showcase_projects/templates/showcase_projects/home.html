@@ -3,21 +3,61 @@
 {% block title %}Витрина проектов{% endblock %}
 
 {% block content %}
-<div style="min-height: 85vh; display: flex; justify-content: center; align-items: center;">
-    <div class="container mt-5">
-        <div class="row mt-3">
-            {% if projects %}
-                {% for project in projects %}
-                    {% include "showcase_projects/project_card.html" %}
-                {% endfor %}
-            {% else %}
-                <h2>Проектов нет!</h2>
-            {% endif %}
-            {% if showButtonCreateProject %}
-                <a href="{% url 'project-create' %}" class="btn btn-primary mt-3">Добавить заявку на проект</a>
-            {% endif %}
+<div class="row mb-2 container py-5">
+    <div class="col-md-3">
+        <div class="row p-2 g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <form method="get">
+                {{ projectFilter.form.as_p }}
+                <input type="submit" />
+            </form>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <section class="py-5 text-center container">
+                <div class="mb-3">
+                    <form action="{% url 'home' %}" method="get">
+                        <input name="q" type="text" class="form-control" id="searchProject" placeholder="Название проекта">
+                    </form>
+                </div>
+            </section>
+            <div style="min-height: 85vh; display: flex; justify-content: center; align-items: center;">
+                {% if projects %}
+                    {% for project in projects %}
+                        {% include "showcase_projects/project_card.html" %}
+                    {% endfor %}
+                {% else %}
+                    <h2>Проектов нет!</h2>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
+<div class="pagination justify-content-center">
+    {% if is_paginated %}
+    {% if page_obj.has_previous %}
+    <a class="btn btn-outline-info mb-4 mr-1"
+        href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">Назад</a>
+    {% else %}
+    <a class="btn btn-outline-info mb-4 mr-1 disabled">Назад</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+    <a class="btn btn-info mb-4 mr-1" href="?q={{ request.GET.q }}&page={{ num }}">{{ num }}</a>
+    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a
+        class="btn btn-outline-info mb-4 mr-1" href="?q={{ request.GET.q }}&page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a class="btn btn-outline-info mb-4 mr-1"
+            href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">Вперед</a>
+        {% else %}
+        <a class="disabled btn btn-outline-info mb-4 mr-1">Вперед</a>
+        {% endif %}
+
+        {% endif %}
+</div>
 {% endblock content %}

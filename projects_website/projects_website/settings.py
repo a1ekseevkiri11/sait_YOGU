@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'django_celery_beat',
     'registration.apps.RegistrationConfig',
     'showcase_projects.apps.ShowcaseProjectsConfig',
