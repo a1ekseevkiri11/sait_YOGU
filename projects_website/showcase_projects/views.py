@@ -51,24 +51,24 @@ from .filters import ProjectFilter
 
 
 class ProjectListView(ListView):
-    model = Project
+    queryset = Project.objects.filter(status='accepted')
     template_name = 'showcase_projects/home.html' 
     context_object_name = 'projects'
-    paginate_by = 1
+    paginate_by = 3
 
-    def get_queryset(self): 
+    def get_queryset(self):
+        queryset = super().get_queryset()
         query = self.request.GET.get('q')
-        project_list = Project.objects.filter(status='accepted')
-        if query != None:
-            project_list = project_list.filter(
+        if query:
+            queryset = queryset.filter(
                 Q(title__icontains=query)
             )
-        return project_list
+        self.filterset = ProjectFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        projectFilter = ProjectFilter(self.request.GET, queryset=Project.objects.filter(status='accepted'))
-        context['projectFilter'] = projectFilter
+        context['projectFilter'] = self.filterset.form
         return context
     
 

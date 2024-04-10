@@ -26,7 +26,27 @@ class ModelWithStatus(models.Model):
             
     def get_status(self):
         return self.status
+    
 
+class DirectionIdentity(models.Model):
+    title = models.CharField(max_length=256, unique=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Spheres(models.Model):
+    title = models.CharField(max_length=256, unique=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Types(models.Model):
+    title = models.CharField(max_length=256, unique=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Project(ModelWithStatus):
@@ -36,17 +56,19 @@ class Project(ModelWithStatus):
         ]
 
     CUSTOMER_TYPE = [
-        ('Внешний'),
-        ('Внутренний'),
+        ('external' ,'Внешний'),
+        ('interior' ,'Внутренний'),
     ]
 
 
-
-    
     title = models.CharField(max_length=100)
     place = models.IntegerField(default=6)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
     lecturer = models.ForeignKey(Lecturer, on_delete=models.CASCADE, default=None, null=True, blank=True, related_name='lecturer')
+    customer_type = models.CharField(max_length=20, choices=CUSTOMER_TYPE, default='processing')
+    directionIdentity = models.ManyToManyField(DirectionIdentity)
+    spheres = models.ManyToManyField(Spheres)
+    types = models.ManyToManyField(Types)
 
     
     def freePlaces(self):
@@ -96,7 +118,7 @@ class Project(ModelWithStatus):
         return self.title
 
 
-# Сделать таблички для остальных параметров проекта
+
 
 
     

@@ -17,10 +17,12 @@ from .viewsCustomer import (
     ProjectDeleteView,
 )
 
+from .models import Project
+
 
 
 urlpatterns = [
-	path('', ProjectListView.as_view(), name='home'),
+	path('', ProjectListView.as_view(model=Project), name='home'),
     path('user/<str:username>', ProjectCustomerListView.as_view(), name='project-user'),
     path('project/<int:pk>/', ProjectDetailView.as_view(), name='project-detail'),
     path('downloadLetter/<int:letter_id>/', MotivationLetterDownload.as_view(), name='downloadLetter'),
