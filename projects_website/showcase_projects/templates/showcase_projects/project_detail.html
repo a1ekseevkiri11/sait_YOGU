@@ -7,9 +7,36 @@
     <div class="media-body">
         <div class="article-metadata">
             <h5 class="card-title">  {{ project.title }}</h5>
-            <p class="card-text">Количество свободных мест: {{ countFreePlace }}/{{ project.place }}</p>
-            <p class="card-text">Заказчик:
-                <a href="{% url 'project-user' project.customer.user.username %}" class="card-text">{{ project.customer.user.username }}</a>
+            <p class="card-text">
+                <strong>Количество свободных мест: </strong>
+                {{ countFreePlace }}/{{ project.place }}
+            </p>
+            <p class="card-text">
+                <strong>Заказчик: </strong>
+                {{ project.order.customer.user.username }}
+            </p>
+            <p class="card-text">
+                <strong>Руководитель: </strong>
+                {{ project.order.lecturer.user.username }}
+            </p>
+
+            <p class="card-text">
+                <strong>Направление идентичности:</strong>
+                {% for directionIdentity in project.order.directionIdentity.all %}
+                    {{ directionIdentity.title }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p class="card-text">
+                <strong>Сфера проекта:</strong>
+                {% for spheres in project.order.spheres.all %}
+                    {{ spheres.title }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p class="card-text">
+                <strong>Вид проекта:</strong>
+                {% for type in project.order.types.all %}
+                    {{ type.title }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
             </p>
             {% if project.participation_set.all|length > 0 %}
                 <p>Участники проекта</p>
@@ -85,15 +112,9 @@
         </div>
     {% endif %}
     
-    {% if project.customer == user.customer %}
-        <h3>{{ project.get_status_display }}</h3>
-        {% if project.rejection_comment %}
-            <p>Комментарий: {{ project.rejection_comment.comment }}</p>
-        {% endif %}
-        <div>
-            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'project-update' project.id %}">Редактировать</a>
-            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'project-delete' project.id %}">Удалить</a>
-        </div>
+    {% if project.order.customer == user.customer %}
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'order-update' project.id %}">Редактировать</a>
+        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'order-delete' project.id %}">Удалить</a>
     {% endif %}
 </article>
 

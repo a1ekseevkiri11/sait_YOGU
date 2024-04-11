@@ -51,7 +51,7 @@ from .filters import ProjectFilter
 
 
 class ProjectListView(ListView):
-    queryset = Project.objects.filter(status='accepted')
+    queryset = Project.objects.all()
     template_name = 'showcase_projects/home.html' 
     context_object_name = 'projects'
     paginate_by = 3
@@ -68,7 +68,7 @@ class ProjectListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['projectFilter'] = self.filterset.form
+        # context['projectFilter'] = self.filterset.form
         return context
     
 
@@ -130,8 +130,7 @@ class ProjectDetailView(DetailView, UserPassesTestMixin):
         if self.request.user.custome == project.customer:
             return True
         
-        status = project.get_status()
-        return status == 'accepted'
+        return False
 
 
 class ProjectCustomerListView(ListView):

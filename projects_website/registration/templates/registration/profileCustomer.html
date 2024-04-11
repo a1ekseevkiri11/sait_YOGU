@@ -1,27 +1,16 @@
 {% extends "showcase_projects/base.html" %}
 {% block content %}
 <h2 class="account-heading">{{ user.username }}</h2>
+<hr>
+<h3>Мои заказы</h3>
 {% if showButtonCreateProject %}
-    <a href="{% url 'project-create' %}" class="btn btn-primary mt-3">Добавить заявку на проект</a>
+    <a href="{% url 'order-create' %}" class="btn btn-primary mt-3">Добавить заявку на проект</a>
 {% endif %}
-{% if projects %}
-    <hr>
-    <h3>Отклоненные проекты</h3>
-    {% for project in projects %}
-        {% if project.status == 'rejected' %}
-            {% include "showcase_projects/project_card.html" %}
-            {% if project.rejection_comment %}
-                <p>Комментарий: {{ project.rejection_comment.comment }}</p>
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-    <hr>
-    <h3>Мои проекты</h3>
-    {% for project in projects %}
-        {% include "showcase_projects/project_card.html" %}
+{% if orders %}
+    {% for order in orders %}
+        {% include "showcase_projects/order_card.html" %}
     {% endfor %}
 {% endif %}
-
-
-
+<br>
+<br>
 {% endblock content %}

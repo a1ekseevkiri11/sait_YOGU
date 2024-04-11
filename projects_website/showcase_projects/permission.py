@@ -20,6 +20,10 @@ def permissionIsActiv(name_permission, groups):
     return False
 
 
+def canDo(user, name_permission):
+    return user.has_perm(APP_NAME + '.' + name_permission) and permissionIsActiv(name_permission, user.groups.all())
+
+
 #
 #
 # ПЕРЕПИСАТЬ ВО Views()!!!

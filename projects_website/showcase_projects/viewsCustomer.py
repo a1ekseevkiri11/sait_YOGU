@@ -12,36 +12,41 @@ from django.views.generic import (
 )
 
 from .models import (
-    Project, 
+    Order, 
 )
 
 from .permission import (
-    canAddProject,
+    canDo
 )
 
 from django.shortcuts import (
     redirect, 
 )
 
+from .formsCustomer import (
+    OrderForm,
+)
 
-class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    model = Project
-    fields =  ['title', 'place']
-    success_url = reverse_lazy('home')
+
+
+class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Order
+    form_class = OrderForm
+    success_url = reverse_lazy('profileCustomer')
 
     def form_valid(self, form):
         form.instance.customer = self.request.user.customer
         return super().form_valid(form)
     
     def test_func(self):
-        return canAddProject(self.request.user)
+        return canDo(self.request.user, 'add_project')
 
 
 
-class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Project
-    fields = ['title', 'place']
-    success_url = reverse_lazy('home')
+class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Order
+    form_class = OrderForm
+    success_url = reverse_lazy('profileCustomer')
 
     def form_valid(self, form):
         form.instance.customer = self.request.user.customer
@@ -51,16 +56,16 @@ class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return redirect(self.success_url)
 
     def test_func(self):
-        project = self.get_object()
-        return self.request.user.customer == project.customer
+        order = self.get_object()
+        return self.request.user.customer == order.customer
     
     
 
 
-class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Project
-    success_url = reverse_lazy('home')
+class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Order
+    success_url = reverse_lazy('profileCustomer')
 
     def test_func(self):
-        project = self.get_object()
-        return self.request.user.customer == project.customer
+        order = self.get_object()
+        return self.request.user.customer == order.customer

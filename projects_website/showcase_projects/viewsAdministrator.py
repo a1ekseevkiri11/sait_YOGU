@@ -26,8 +26,8 @@ class AdministratorProjectsAcceptanceView(ListView, LoginRequiredMixin, UserPass
     template_name = 'showcase_projects/administrator/acceptanceProjects.html'
     context_object_name = 'projects'
 
-    def get_queryset(self):
-        return Project.objects.filter(status='processing')
+    # def get_queryset(self):
+    #     return Project.objects.filter(status='processing')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -36,19 +36,19 @@ class AdministratorProjectsAcceptanceView(ListView, LoginRequiredMixin, UserPass
         return context
     
     def post(self, request, *args, **kwargs):
-        project_id = request.POST.get('project_id')
-        project = Project.objects.get(id=project_id)
-        if 'accept' in request.POST:
-            form = AcceptProjectForm(request.POST)
-            if form.is_valid():
-                project.set_status('accepted')  
+        # project_id = request.POST.get('project_id')
+        # project = Project.objects.get(id=project_id)
+        # if 'accept' in request.POST:
+        #     form = AcceptProjectForm(request.POST)
+        #     if form.is_valid():
+        #         project.set_status('accepted')  
 
-        if 'reject' in request.POST:
-            form = RejectProjectForm(request.POST)
-            if form.is_valid():
-                project.set_status('rejected')
-                comment = form.cleaned_data['comment']
-                project.addRejectionComment(comment)
+        # if 'reject' in request.POST:
+        #     form = RejectProjectForm(request.POST)
+        #     if form.is_valid():
+        #         project.set_status('rejected')
+        #         comment = form.cleaned_data['comment']
+        #         project.addRejectionComment(comment)
 
         return redirect('administrator')
 

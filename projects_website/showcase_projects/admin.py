@@ -8,6 +8,7 @@ from .models import (
     Spheres,
     DirectionIdentity,
     Types,
+    Order,
 )
 admin.site.register(Participation)
 admin.site.register(MotivationLetters)
@@ -16,10 +17,11 @@ admin.site.register(TimePermission)
 
 
 
-class ProjectAdmin(admin.ModelAdmin):
+class OrderAdmin(admin.ModelAdmin):
     filter_horizontal = ('directionIdentity','spheres','types')
 
-admin.site.register(Project, ProjectAdmin)
+admin.site.register(Order, OrderAdmin)
+admin.site.register(Project)
 admin.site.register(Spheres)
 admin.site.register(Types)
 admin.site.register(DirectionIdentity)

@@ -27,6 +27,7 @@ from django.urls import reverse_lazy
 from showcase_projects.models import (
     Participation,
     Project,
+    Order,
     MotivationLetters,
 )
 
@@ -61,9 +62,9 @@ def profile(request):
 
 
 class CustomerProfile(ListView, UserPassesTestMixin):
-    model = Project
+    model = Order
     template_name = 'registration/profileCustomer.html'
-    context_object_name = 'projects'
+    context_object_name = 'orders'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -72,7 +73,7 @@ class CustomerProfile(ListView, UserPassesTestMixin):
     
     def get_queryset(self):
         user = get_object_or_404(Customer, user__username=self.request.user.username)
-        return Project.objects.filter(customer=user)
+        return Order.objects.filter(customer=user)
     
     def test_func(self):
         return self.request.user.groups.filter(name='customer').exists()

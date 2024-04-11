@@ -28,6 +28,9 @@ class ModelWithStatus(models.Model):
         return self.status
     
 
+
+
+
 class DirectionIdentity(models.Model):
     title = models.CharField(max_length=256, unique=True)
 
@@ -47,9 +50,32 @@ class Types(models.Model):
 
     def __str__(self):
         return self.title
+    
 
+class Order(ModelWithStatus):
+    title = models.CharField(max_length=100)
+    # description = models.TextField()
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
+    directionIdentity = models.ManyToManyField(DirectionIdentity)
+    spheres = models.ManyToManyField(Spheres)
+    types = models.ManyToManyField(Types)
 
-class Project(ModelWithStatus):
+    def addRejectionComment(self, comment):
+        self.deleteRejectionComment()
+        if comment != '':
+            RejectionComment.objects.create(project=self, comment=comment)
+
+    def deleteRejectionComment(self):
+        try:
+            comment = RejectionComment.objects.get(project=self)
+            comment.delete()
+        except RejectionComment.DoesNotExist:
+            pass
+
+    def __str__(self):
+        return self.title
+
+class Project(models.Model):
     class Meta:
         permissions = [
             ("change_status_project", "Can change status project"),
@@ -60,15 +86,11 @@ class Project(ModelWithStatus):
         ('interior' ,'Внутренний'),
     ]
 
-
-    title = models.CharField(max_length=100)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, default=None, null=True, blank=True,)
     place = models.IntegerField(default=6)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
     lecturer = models.ForeignKey(Lecturer, on_delete=models.CASCADE, default=None, null=True, blank=True, related_name='lecturer')
     customer_type = models.CharField(max_length=20, choices=CUSTOMER_TYPE, default='processing')
-    directionIdentity = models.ManyToManyField(DirectionIdentity)
-    spheres = models.ManyToManyField(Spheres)
-    types = models.ManyToManyField(Types)
+    
 
     
     def freePlaces(self):
@@ -102,26 +124,7 @@ class Project(ModelWithStatus):
         
         MotivationLetters.objects.create(project=self, student=student, letter=letter)
 
-    def addRejectionComment(self, comment):
-        self.deleteRejectionComment()
-        if comment != '':
-            RejectionComment.objects.create(project=self, comment=comment)
 
-    def deleteRejectionComment(self):
-        try:
-            comment = RejectionComment.objects.get(project=self)
-            comment.delete()
-        except RejectionComment.DoesNotExist:
-            pass
-
-    def __str__(self):
-        return self.title
-
-
-
-
-
-    
 
 
 class Participation(models.Model):
@@ -143,9 +146,8 @@ class MotivationLetters(ModelWithStatus):
 
 
 class RejectionComment(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='rejection_comment')
+    project = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='rejection_comment')
     comment = models.TextField()
-
 
 
 
