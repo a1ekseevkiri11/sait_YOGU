@@ -60,18 +60,6 @@ class Order(ModelWithStatus):
     spheres = models.ManyToManyField(Spheres)
     types = models.ManyToManyField(Types)
 
-    def addRejectionComment(self, comment):
-        self.deleteRejectionComment()
-        if comment != '':
-            RejectionComment.objects.create(project=self, comment=comment)
-
-    def deleteRejectionComment(self):
-        try:
-            comment = RejectionComment.objects.get(project=self)
-            comment.delete()
-        except RejectionComment.DoesNotExist:
-            pass
-
     def __str__(self):
         return self.title
 
@@ -143,11 +131,6 @@ class MotivationLetters(ModelWithStatus):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     letter = models.FileField(upload_to='letters/')
-
-
-class RejectionComment(models.Model):
-    project = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='rejection_comment')
-    comment = models.TextField()
 
 
 

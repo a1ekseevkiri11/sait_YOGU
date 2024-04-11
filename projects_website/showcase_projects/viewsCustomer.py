@@ -51,8 +51,8 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         form.instance.customer = self.request.user.customer
         form.save()
-        post = self.get_object()
-        post.set_status('processing')
+        order = self.get_object()
+        order.set_status('processing')
         return redirect(self.success_url)
 
     def test_func(self):

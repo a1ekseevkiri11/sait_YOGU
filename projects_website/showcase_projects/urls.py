@@ -8,7 +8,9 @@ from .views import (
 )
 
 from .viewsAdministrator import (
-    AdministratorProjectsAcceptanceView,
+    AdministratorOrderAcceptanceView,
+    AdministratorProjectCreateView,
+    AdministratorOrderDeleteView
 )
 
 from .viewsCustomer import (
@@ -31,5 +33,7 @@ urlpatterns = [
     path('order/<int:pk>/update/', OrderUpdateView.as_view(), name='order-update'),
     path('order/<int:pk>/delete/', OrderDeleteView.as_view(), name='order-delete'),
     #administrator
-    path('administrator/', AdministratorProjectsAcceptanceView.as_view(), name='administrator'),
+    path('administrator/', AdministratorOrderAcceptanceView.as_view(), name='administrator'),
+    path('project/new/<int:pk>/', AdministratorProjectCreateView.as_view(), name='project-create'),
+    path('administrator/order/<int:pk>/delete/', AdministratorOrderDeleteView.as_view(), name='administrator-order-delete'),
 ]

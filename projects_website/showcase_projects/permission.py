@@ -21,6 +21,8 @@ def permissionIsActiv(name_permission, groups):
 
 
 def canDo(user, name_permission):
+    if user.groups.filter(name='administrator').exists():
+        return True
     return user.has_perm(APP_NAME + '.' + name_permission) and permissionIsActiv(name_permission, user.groups.all())
 
 

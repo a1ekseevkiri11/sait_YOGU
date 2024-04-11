@@ -7,21 +7,9 @@
 <div style="min-height: 85vh; display: flex; justify-content: center; align-items: center;">
     <div class="container mt-5">
         <div class="row mt-3">
-            {% if projects %}
-                {% for project in projects %}
-                    {% include "showcase_projects/project_card.html" %}
-                    <form method="post" action="{% url 'administrator' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="project_id" value="{{ project.id }}">
-                        <button type="submit" name="accept">Принять</button>
-                    </form>
-
-                    <form method="post" action="{% url 'administrator' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="project_id" value="{{ project.id }}">
-                        {{ reject_form.as_p }}
-                        <button type="submit" name="reject">Отклонить</button>
-                    </form>
+            {% if orders %}
+                {% for order in orders %}
+                    {% include "showcase_projects/order_card.html" %}
                 {% endfor %}
             {% else %}
                 <h2>Заявок на проекты нет</h2>
