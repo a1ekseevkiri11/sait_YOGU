@@ -54,21 +54,27 @@ class ProjectListView(ListView):
     queryset = Project.objects.all()
     template_name = 'showcase_projects/home.html' 
     context_object_name = 'projects'
-    paginate_by = 3
+    paginate_by = 1
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        
         query = self.request.GET.get('q')
+        filters = self.request.GET
+        
         if query:
-            queryset = queryset.filter(
-                Q(title__icontains=query)
-            )
-        self.filterset = ProjectFilter(self.request.GET, queryset=queryset)
+            queryset = queryset.filter(Q(order__title__icontains=query))
+        
+        self.filterset = ProjectFilter(filters, queryset=queryset)
         return self.filterset.qs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context['projectFilter'] = self.filterset.form
+        
+        context['projectFilter'] = self.filterset.form
+        
+        context['applied_filters'] = self.request.GET.urlencode()
+        
         return context
     
 

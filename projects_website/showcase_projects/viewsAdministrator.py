@@ -24,8 +24,6 @@ from .formsCustomer import (
 )
 
 from .formsAdministrator import (
-    AcceptProjectForm,
-    RejectProjectForm,
     ProjectForm
 )
 

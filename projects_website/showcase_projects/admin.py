@@ -3,7 +3,6 @@ from .models import (
     Project, 
     Participation,
     MotivationLetters,
-    RejectionComment,
     TimePermission,
     Spheres,
     DirectionIdentity,
@@ -12,10 +11,7 @@ from .models import (
 )
 admin.site.register(Participation)
 admin.site.register(MotivationLetters)
-admin.site.register(RejectionComment)
 admin.site.register(TimePermission)
-
-
 
 class OrderAdmin(admin.ModelAdmin):
     filter_horizontal = ('directionIdentity','spheres','types')
