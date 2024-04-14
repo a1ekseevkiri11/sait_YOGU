@@ -40,17 +40,18 @@
                                     {{ user.username }}
                                 </div>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuUser">
-                                        <a class="dropdown-item" href="{% url 'profile' %}">Профиль</a>
                                         <a class="dropdown-item" href="{% url 'home' %}">Витрина проектов</a>
+
                                         {% if user.student %}
-                                            <a class="dropdown-item">Мой проект</a>
+                                            <a class="dropdown-item" href="{% url 'project-my' %}">Мой проект</a>
                                         {% endif %}
                                         {% if user.lecturer %}
-                                            <a class="dropdown-item">Проекты под моим руководством</a>
+                                            <a class="dropdown-item" href="{% url 'project-my-lead' %}">Проекты под моим руководством</a>
                                         {% endif %}
                                         {% if user.customer %}
-                                            <a class="dropdown-item" href="{% url 'order-my' %}"">Мои заказы</a>
+                                            <a class="dropdown-item" href="{% url 'order-my' %}">Мои заказы</a>
                                         {% endif %}
+                                        <hr class="dropdown-divider">
                                         <form method="post" action="{% url 'logout' %}">
                                             {% csrf_token %}
                                             <button class="dropdown-item" type="submit">Выход</button>
@@ -141,6 +142,129 @@
             xhr.send();
         }
     });
+</script>
+
+
+<script>
+    const COUNT_PAGINATION_BUTTON = 3
+
+    function switchPage(page) {
+        var currentParams = getCurrentParamsWithoutPage();
+        var url = window.location.pathname + "?page=" + page;
+
+        if (currentParams !== "") {
+            url += "&" + currentParams;
+        }
+
+        window.location.href = url;
+    }
+
+    // Функция для создания кнопок пагинации
+    function createPaginationButtons(currentPage, totalPages) {
+        if (totalPages === 1){
+            return;
+        }
+        var paginationContainer = document.getElementById("pagination-buttons-container");
+        paginationContainer.innerHTML = "";
+        
+        //кнопка "Назад"
+
+        var backButton = document.createElement("button");
+        backButton.innerHTML = "Назад";
+        backButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+        backButton.onclick = function() {
+            switchPage(currentPage - 1);
+        };
+        if (currentPage === 1) {
+            backButton.disabled = true;
+        }
+        paginationContainer.appendChild(backButton);
+
+        if (currentPage > 2) {
+            var firstPageButton = document.createElement("button");
+            firstPageButton.innerHTML = 1;
+            firstPageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+            firstPageButton.onclick = function() {
+                switchPage(1);
+            };
+            paginationContainer.appendChild(firstPageButton);
+
+            if (currentPage > 3) {
+                var dotsBeforeFirstPage = document.createElement("span");
+                dotsBeforeFirstPage.innerHTML = "...";
+                dotsBeforeFirstPage.className = "btn btn-outline-info mb-4 mr-1 pagination-button disabled";
+                paginationContainer.appendChild(dotsBeforeFirstPage);
+            }
+        }
+
+        for (var i = currentPage - 1; i <= currentPage + 1; i++) {
+            if (i >= 1 && i <= totalPages) {
+                var pageButton = document.createElement("button");
+                pageButton.innerHTML = i;
+                pageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+                pageButton.onclick = function() {
+                    switchPage(parseInt(this.innerHTML));
+                };
+                if (i === currentPage) {
+                    pageButton.disabled = true;
+                }
+                paginationContainer.appendChild(pageButton);
+            }
+        }
+
+        
+
+        if (currentPage < totalPages - 1) {
+            if (currentPage < totalPages - 2){
+                var dotsAfterLastPage = document.createElement("span");
+                dotsAfterLastPage.innerHTML = "...";
+                dotsAfterLastPage.className = "btn btn-outline-info mb-4 mr-1 pagination-button disabled";
+                paginationContainer.appendChild(dotsAfterLastPage);
+            }
+            var lastPageButton = document.createElement("button");
+            lastPageButton.innerHTML = totalPages;
+            lastPageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+            lastPageButton.onclick = function() {
+                switchPage(totalPages);
+            };
+            paginationContainer.appendChild(lastPageButton);
+        }
+
+        var forwardButton = document.createElement("button");
+        forwardButton.innerHTML = "Вперед";
+        forwardButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+        forwardButton.onclick = function() {
+            switchPage(currentPage + 1);
+        };
+        if (currentPage === totalPages) {
+            forwardButton.disabled = true;
+        }
+        paginationContainer.appendChild(forwardButton);
+    }
+
+    function getCurrentParamsWithoutPage() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var filteredParams = new URLSearchParams();
+
+        for (const [key, value] of urlParams.entries()) {
+            if (key !== 'page') {
+                filteredParams.append(key, value);
+            }
+        }
+
+        return filteredParams.toString();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var currentPage = {{ page_obj.number }};
+        var totalPages = {{ paginator.num_pages }}; 
+
+        createPaginationButtons(currentPage, totalPages);
+    });
+
+    function clearFilters() {
+        window.location.href = window.location.origin + window.location.pathname;
+    }
 </script>
 
 </html>

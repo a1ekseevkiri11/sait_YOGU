@@ -20,6 +20,14 @@ from .viewsCustomer import (
     CustomerOrder,
 )
 
+from .viewsLecturer import (
+    LecturerProject
+)
+
+from .viewsStudent import (
+    projectMy
+)
+
 from .models import Project
 
 
@@ -29,6 +37,10 @@ urlpatterns = [
     # path('user/<str:username>/', ProjectCustomerListView.as_view(), name='project-user'),
     path('project/<int:pk>/', ProjectDetailView.as_view(), name='project-detail'),
     path('downloadLetter/<int:letter_id>/', MotivationLetterDownload.as_view(), name='downloadLetter'),
+    #lecturer
+    path('project/my_lead/', LecturerProject.as_view(), name='project-my-lead'),
+    #student
+    path('project/my/', projectMy, name='project-my'),
     #customer
     path('order/my', CustomerOrder.as_view(), name='order-my'),
     path('order/new/', OrderCreateView.as_view(), name='order-create'),

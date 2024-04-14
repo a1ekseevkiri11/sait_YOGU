@@ -1,0 +1,41 @@
+from django.urls import (
+    reverse_lazy,
+)
+
+from django.shortcuts import (
+    redirect,
+    get_object_or_404,
+)
+
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin, 
+    UserPassesTestMixin
+)
+
+from django.views.generic import (
+    ListView
+)
+
+from .models import (
+    Project,
+    Lecturer
+)
+
+from .permission import (
+    canDo
+)
+
+
+class LecturerProject(ListView, UserPassesTestMixin, LoginRequiredMixin):
+    model = Project
+    template_name = 'showcase_projects/lecturer_project.html'
+    context_object_name = 'projects'
+    paginate_by = 6
+
+    
+    def get_queryset(self):
+        user = get_object_or_404(Lecturer, user__username=self.request.user.username)
+        return Project.objects.filter(lecturer=user)
+    
+    def test_func(self):
+        return self.request.user.groups.filter(name='lecturer').exists()

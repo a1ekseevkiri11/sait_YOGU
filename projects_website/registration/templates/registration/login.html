@@ -50,28 +50,23 @@
                 <div class="content-section justify-content-center">
                     <div class="row justify-content-center align-items-center mb-4">
                         <img src="{% static "registration/img/logo-separator.svg" %}" id="logo" class="mr-3" style="width: 50px; height: auto;">
-                        <h3 class="mb-0" >Витрина<br>проектов<br>ЮГУ</h3>
+                        <h3 class="mb-0">ВИТРИНА<br>ПРОЕКТОВ<br>ЮГУ</h3>
                     </div>
-                    
+                    <br>
                     <form method="post" class="mx-auto" style="max-width: 400px;">
                         {% csrf_token %}
                         <div class="form-group">
-                            <input type="text" class="form-control mt-4" id="id_username" name="username" placeholder="Логин" required>
+                            <input type="text" class="form-control" id="id_username" name="username" placeholder="Логин" required>
                         </div>
                         <div class="form-group">
                             <input type="password" class="form-control" id="id_password" name="password" placeholder="Пароль" required>
                         </div>
-                        <button class="btn btn-primary btn-block" type="submit">Войти</button>
+                        <button class="form-control btn-primary btn-block" type="submit">Войти</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    
-    
-    
-    
-    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"

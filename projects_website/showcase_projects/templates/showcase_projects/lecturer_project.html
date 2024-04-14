@@ -1,6 +1,6 @@
 {% extends "showcase_projects/base.html" %}
 
-{% block title %}Мои заказы{% endblock %}
+{% block title %}Проекты под моим руководством{% endblock %}
 
 
 
@@ -11,17 +11,17 @@
     <div class="row">
         
         <div class="order-md-2">
-            <h3>Мои заказы</h3>
+            <h3>Проекты под моим руководством</h3>
             {% if showButtonCreateProject %}
                 <a href="{% url 'order-create' %}" class="btn btn-primary mt-3">Добавить заявку на проект</a>
             {% endif %}
             <div class="row row-cols-1 row-cols-md-2 g-3 mt-3">
-                {% if orders %}
-                    {% for order in orders %}
-                        {% include "showcase_projects/order_card.html" %}
+                {% if projects %}
+                    {% for project in projects %}
+                        {% include "showcase_projects/project_card.html" %}
                     {% endfor %}
                 {% else %}
-                <p>Заказов нет</p>
+                <p>Проектов нет</p>
                 {% endif %}
             </div>
             <div class="pagination justify-content-center mt-4">

@@ -110,7 +110,7 @@
         </div>
     {% endif %}
     
-    {% if project.order.customer == user.customer %}
+    {% if project.order.customer == user.customer and not project.order.status == "accepted" %}
         <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'order-update' project.id %}">Редактировать</a>
         <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'order-delete' project.id %}">Удалить</a>
     {% endif %}

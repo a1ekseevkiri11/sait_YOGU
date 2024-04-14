@@ -37,6 +37,8 @@ class CustomerOrder(ListView, UserPassesTestMixin):
     model = Order
     template_name = 'showcase_projects/customer_order.html'
     context_object_name = 'orders'
+    paginate_by = 6
+    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -80,6 +82,8 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         order = self.get_object()
+        if order.status == "accepted":
+            return False
         return self.request.user.customer == order.customer
     
     
@@ -91,4 +95,6 @@ class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         order = self.get_object()
+        if order.status == "accepted":
+            return False
         return self.request.user.customer == order.customer
