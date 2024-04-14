@@ -23,10 +23,11 @@
             <header class="border-bottom lh-1 p-1">
                 <div class="row flex-nowrap justify-content-between align-items-center">
                     <div class="col-4 pt-1 d-flex">
-                        <a href="{% url 'home' %}" class="d-inline-flex link-body-emphasis text-decoration-none">
-                            <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap">
+                        <a href="{% url 'home' %}" class="d-inline-flex text-decoration-none">
+                            <svg class="bi" width="40" height="32" role="img" aria-label="Витрина проектов ЮГУ">
                                 <img class="img-fluid" src="{% static "showcase_projects/img/logo-separator.svg" %}" id="logo">
                             </svg>
+                            <p class="mb-0 fw-bold text-dark" style="margin-left: 5%;">ВИТРИНА<br>ПРОЕКТОВ<br>ЮГУ</p>
                         </a>
                     </div>
 
@@ -44,6 +45,7 @@
 
                                         {% if user.student %}
                                             <a class="dropdown-item" href="{% url 'project-my' %}">Мой проект</a>
+                                            <a class="dropdown-item" href="{% url 'motivation-letter-my' %}">Мои мотивационные письма</a>
                                         {% endif %}
                                         {% if user.lecturer %}
                                             <a class="dropdown-item" href="{% url 'project-my-lead' %}">Проекты под моим руководством</a>

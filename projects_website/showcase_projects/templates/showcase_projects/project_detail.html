@@ -62,17 +62,42 @@
         {% elif participationProject %}
 
             {% if motivation_form %}
-                <form method="post" action="{% url 'project-detail' pk=project.pk %}" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="add_motivation_letter" value="true">
-                    {{ motivation_form }}
-                    <button type="submit">Отправить</button>
-                </form>
-            {% endif %}
+            <form method="post" action="{% url 'project-detail' pk=project.pk %}" enctype="multipart/form-data" class="needs-validation" novalidate style="max-width: 400px;">
+                {% csrf_token %}
+                <input type="hidden" name="add_motivation_letter" value="true">
+                <div class="mb-3 d-flex">
+                    <div class="input-group flex-nowrap">
+                        <input type="file" class="form-control" id="motivation_letter" name="motivation_letter" required>
+                        <div class="invalid-feedback">Пожалуйста, выберите файл.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary ms-2">Отправить</button>
+                </div>
+            </form>
             
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmationModal">
-                Присоединиться к проекту
-            </button>
+            <script>
+            // Добавляем проверку формы с использованием Bootstrap
+            (function() {
+                'use strict';
+                window.addEventListener('load', function() {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    var validation = Array.prototype.filter.call(forms, function(form) {
+                        form.addEventListener('submit', function(event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+            </script>
+            {% endif %}
+            {% if canAddToProject%}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                    Присоединиться к проекту
+                </button>
+            {% endif %}
 
         {% endif %}
         <!-- Всплывающее окно -->

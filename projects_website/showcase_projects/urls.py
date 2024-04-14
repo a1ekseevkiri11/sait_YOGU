@@ -25,7 +25,8 @@ from .viewsLecturer import (
 )
 
 from .viewsStudent import (
-    projectMy
+    projectMy,
+    StudentMotivationLetter,
 )
 
 from .models import Project
@@ -41,6 +42,7 @@ urlpatterns = [
     path('project/my_lead/', LecturerProject.as_view(), name='project-my-lead'),
     #student
     path('project/my/', projectMy, name='project-my'),
+    path('motivationLetter/my/', StudentMotivationLetter.as_view(), name='motivation-letter-my'),
     #customer
     path('order/my', CustomerOrder.as_view(), name='order-my'),
     path('order/new/', OrderCreateView.as_view(), name='order-create'),

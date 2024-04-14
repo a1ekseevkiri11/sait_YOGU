@@ -35,10 +35,9 @@ from .models import (
 from .permission import (
     canAddParticipation,
     canDeleteParticipation,
-    canAddProject,
     canDownloadMotivationLetters,
     canAddMotivationLetters,
-
+    canDo
 
 )
 
@@ -90,15 +89,15 @@ class ProjectDetailView(DetailView, UserPassesTestMixin):
         if not self.request.user.is_authenticated:
             return context
         
-        if self.request.user.groups.filter(name='student').exists():
-
-            if canAddParticipation(self.request.user):
-                student =  self.request.user.student
-                context['participationProject'] = project.freePlaces()
+        if self.request.user.student:
+            context['participationProject'] = project.freePlaces()
+            if canDo(self.request.user, 'add_participation'):
+                student = self.request.user.student
+                context['canAddToProject'] = True
                 context['studentInProject'] = Participation.objects.filter(student=student).exists()
                 context['studentInThisProject'] = project.studentInThisProject(student)
             
-            if canAddMotivationLetters(self.request.user):
+            if canDo(self.request.user, 'add_motivationletters'):
                 context['motivation_form'] =  MotivationLettersForm()
             
         return context
