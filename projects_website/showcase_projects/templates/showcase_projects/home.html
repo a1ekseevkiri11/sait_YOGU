@@ -3,157 +3,187 @@
 {% block title %}Витрина проектов{% endblock %}
 
 {% block content %}
-<div class="row mb-2 container py-5">
-    <div class="col-md-3">
-        <div class="row p-2 g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <form method="get">
-                {{ projectFilter.as_p }}
-                <input type="submit" />
-            </form>
-        </div>
-    </div>
-    <div class="col-md-9">
-        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <section class="py-5 text-center container">
-                <div class="mb-3">
-                    <form action="{% url 'home' %}" method="get">
-                        <input name="q" type="text" class="form-control" id="searchProject" placeholder="Название проекта">
-                    </form>
-                </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 order-md-2">
+            <section class="py-1 text-center">
+                <form action="{% url 'home' %}" method="get"
+                    class="d-flex justify-content-between align-items-center mb-3">
+                    <input name="q" type="text" class="form-control me-2" id="searchProject"
+                        placeholder="Название проекта">
+                    <button type="submit" class="btn btn-primary me-2">Найти</button>
+                </form>
             </section>
-            <div style="min-height: 85vh; display: flex; justify-content: center; align-items: center;">
+
+            <div class="row row-cols-1 row-cols-md-2 g-3">
                 {% if projects %}
                     {% for project in projects %}
                         {% include "showcase_projects/project_card.html" %}
                     {% endfor %}
                 {% else %}
-                    <h2>Проектов нет!</h2>
+                    <div class="col">
+                        <h2>Проектов нет!</h2>
+                    </div>
                 {% endif %}
+            </div>
+            <div class="pagination justify-content-center mt-4">
+
+                <div id="pagination-buttons-container">
+                    <!-- Кнопки пагинации будут отображены здесь -->
+                </div>
+            </div>
+    
+        </div>
+
+        <div class="col-md-4 order-md-1" id="filtersColumn">
+            <div class="row p-2 g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative" style="overflow-y: auto;">
+                <h5 class="text-center mb-3 mt-2">Подбор параметров</h5>
+                <form method="get">
+                    <div class="accordion" id="projectFiltersAccordion">
+                        {% for filter in projectFilter %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="filterHeading{{ forloop.counter }}">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse{{ forloop.counter }}" aria-expanded="true" aria-controls="filterCollapse{{ forloop.counter }}">
+                                        {{ filter.label }}
+                                    </button>
+                                </h2>
+                                <div id="filterCollapse{{ forloop.counter }}" class="accordion-collapse collapse show" aria-labelledby="filterHeading{{ forloop.counter }}">
+                                    <div class="accordion-body">
+                                        {{ filter }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col text-center">
+                        <input type="submit" class="btn btn-primary btn-block mt-2" value="Применить" />
+                        <button type="button" class="btn btn-secondary btn-block mt-2" onclick="clearFilters()">Отменить</button>
+                    </div>
+                </form>
+                
             </div>
         </div>
     </div>
 </div>
 
-<div class="pagination justify-content-center">
+<script>
+    const COUNT_PAGINATION_BUTTON = 3
 
-    <div id="pagination-buttons-container">
-        <!-- Кнопки пагинации будут отображены здесь -->
-    </div>
-    
-    <script>
-        const COUNT_PAGINATION_BUTTON = 3
+    function switchPage(page) {
+        var currentParams = getCurrentParamsWithoutPage();
+        var url = window.location.pathname + "?page=" + page;
 
-        function switchPage(page) {
-            var currentParams = getCurrentParamsWithoutPage();
-            var url = window.location.pathname + "?page=" + page;
-    
-            if (currentParams !== "") {
-                url += "&" + currentParams;
-            }
-    
-            window.location.href = url;
+        if (currentParams !== "") {
+            url += "&" + currentParams;
         }
-    
-        // Функция для создания кнопок пагинации
-        function createPaginationButtons(currentPage, totalPages) {
-            
-            var paginationContainer = document.getElementById("pagination-buttons-container");
-            paginationContainer.innerHTML = "";
-            
-            //кнопка "Назад"
 
-            var backButton = document.createElement("button");
-            backButton.innerHTML = "Назад";
-            backButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
-            backButton.onclick = function() {
-                switchPage(currentPage - 1);
+        window.location.href = url;
+    }
+
+    // Функция для создания кнопок пагинации
+    function createPaginationButtons(currentPage, totalPages) {
+        
+        var paginationContainer = document.getElementById("pagination-buttons-container");
+        paginationContainer.innerHTML = "";
+        
+        //кнопка "Назад"
+
+        var backButton = document.createElement("button");
+        backButton.innerHTML = "Назад";
+        backButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+        backButton.onclick = function() {
+            switchPage(currentPage - 1);
+        };
+        if (currentPage === 1) {
+            backButton.disabled = true;
+        }
+        paginationContainer.appendChild(backButton);
+
+        if (currentPage > 2) {
+            var firstPageButton = document.createElement("button");
+            firstPageButton.innerHTML = 1;
+            firstPageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+            firstPageButton.onclick = function() {
+                switchPage(1);
             };
-            if (currentPage === 1) {
-                backButton.disabled = true;
-            }
-            paginationContainer.appendChild(backButton);
-    
-            if (currentPage > 2) {
-                var firstPageButton = document.createElement("button");
-                firstPageButton.innerHTML = 1;
-                firstPageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
-                firstPageButton.onclick = function() {
-                    switchPage(1);
-                };
-                paginationContainer.appendChild(firstPageButton);
-    
-                if (currentPage > 3) {
-                    var dotsBeforeFirstPage = document.createElement("span");
-                    dotsBeforeFirstPage.innerHTML = "...";
-                    dotsBeforeFirstPage.className = "btn btn-outline-info mb-4 mr-1 pagination-button disabled";
-                    paginationContainer.appendChild(dotsBeforeFirstPage);
-                }
-            }
-    
-            for (var i = currentPage - 1; i <= currentPage + 1; i++) {
-                if (i >= 1 && i <= totalPages) {
-                    var pageButton = document.createElement("button");
-                    pageButton.innerHTML = i;
-                    pageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
-                    pageButton.onclick = function() {
-                        switchPage(parseInt(this.innerHTML));
-                    };
-                    if (i === currentPage) {
-                        pageButton.disabled = true;
-                    }
-                    paginationContainer.appendChild(pageButton);
-                }
-            }
-    
-            
+            paginationContainer.appendChild(firstPageButton);
 
-            if (currentPage < totalPages - 1) {
-                    if (currentPage < totalPages - 2){
-                    var dotsAfterLastPage = document.createElement("span");
-                    dotsAfterLastPage.innerHTML = "...";
-                    dotsAfterLastPage.className = "btn btn-outline-info mb-4 mr-1 pagination-button disabled";
-                    paginationContainer.appendChild(dotsAfterLastPage);
-                }
-                var lastPageButton = document.createElement("button");
-                lastPageButton.innerHTML = totalPages;
-                lastPageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
-                lastPageButton.onclick = function() {
-                    switchPage(totalPages);
+            if (currentPage > 3) {
+                var dotsBeforeFirstPage = document.createElement("span");
+                dotsBeforeFirstPage.innerHTML = "...";
+                dotsBeforeFirstPage.className = "btn btn-outline-info mb-4 mr-1 pagination-button disabled";
+                paginationContainer.appendChild(dotsBeforeFirstPage);
+            }
+        }
+
+        for (var i = currentPage - 1; i <= currentPage + 1; i++) {
+            if (i >= 1 && i <= totalPages) {
+                var pageButton = document.createElement("button");
+                pageButton.innerHTML = i;
+                pageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+                pageButton.onclick = function() {
+                    switchPage(parseInt(this.innerHTML));
                 };
-                paginationContainer.appendChild(lastPageButton);
-            }
-    
-            var forwardButton = document.createElement("button");
-            forwardButton.innerHTML = "Вперед";
-            forwardButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
-            forwardButton.onclick = function() {
-                switchPage(currentPage + 1);
-            };
-            if (currentPage === totalPages) {
-                forwardButton.disabled = true;
-            }
-            paginationContainer.appendChild(forwardButton);
-        }
-    
-        function getCurrentParamsWithoutPage() {
-            var urlParams = new URLSearchParams(window.location.search);
-            var filteredParams = new URLSearchParams();
-    
-            for (const [key, value] of urlParams.entries()) {
-                if (key !== 'page') {
-                    filteredParams.append(key, value);
+                if (i === currentPage) {
+                    pageButton.disabled = true;
                 }
+                paginationContainer.appendChild(pageButton);
             }
-    
-            return filteredParams.toString();
         }
-    
-        document.addEventListener("DOMContentLoaded", function() {
-            var currentPage = {{ page_obj.number }};
-            var totalPages = {{ paginator.num_pages }}; 
-    
-            createPaginationButtons(currentPage, totalPages);
-        });
-    </script>
-</div>
+
+        
+
+        if (currentPage < totalPages - 1) {
+            if (currentPage < totalPages - 2){
+                var dotsAfterLastPage = document.createElement("span");
+                dotsAfterLastPage.innerHTML = "...";
+                dotsAfterLastPage.className = "btn btn-outline-info mb-4 mr-1 pagination-button disabled";
+                paginationContainer.appendChild(dotsAfterLastPage);
+            }
+            var lastPageButton = document.createElement("button");
+            lastPageButton.innerHTML = totalPages;
+            lastPageButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+            lastPageButton.onclick = function() {
+                switchPage(totalPages);
+            };
+            paginationContainer.appendChild(lastPageButton);
+        }
+
+        var forwardButton = document.createElement("button");
+        forwardButton.innerHTML = "Вперед";
+        forwardButton.className = "btn btn-outline-info mb-4 mr-1 pagination-button";
+        forwardButton.onclick = function() {
+            switchPage(currentPage + 1);
+        };
+        if (currentPage === totalPages) {
+            forwardButton.disabled = true;
+        }
+        paginationContainer.appendChild(forwardButton);
+    }
+
+    function getCurrentParamsWithoutPage() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var filteredParams = new URLSearchParams();
+
+        for (const [key, value] of urlParams.entries()) {
+            if (key !== 'page') {
+                filteredParams.append(key, value);
+            }
+        }
+
+        return filteredParams.toString();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var currentPage = {{ page_obj.number }};
+        var totalPages = {{ paginator.num_pages }}; 
+
+        createPaginationButtons(currentPage, totalPages);
+    });
+
+    function clearFilters() {
+        window.location.href = window.location.origin + window.location.pathname;
+    }
+</script>
+
 {% endblock content %}

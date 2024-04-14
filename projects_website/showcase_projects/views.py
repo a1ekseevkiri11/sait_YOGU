@@ -54,7 +54,7 @@ class ProjectListView(ListView):
     queryset = Project.objects.all()
     template_name = 'showcase_projects/home.html' 
     context_object_name = 'projects'
-    paginate_by = 1
+    paginate_by = 4
 
     def get_queryset(self):
         queryset = super().get_queryset()
