@@ -107,7 +107,7 @@ class Project(models.Model):
         if Participation.objects.filter(student=student).exists():
             return
 
-        if MotivationLetters.objects.filter(student=student).exists():
+        if MotivationLetters.objects.filter(student=student, project=self).exists():
             return
         
         MotivationLetters.objects.create(project=self, student=student, letter=letter)
