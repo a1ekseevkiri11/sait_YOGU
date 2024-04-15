@@ -83,16 +83,9 @@ class CustomerProfile(ListView, UserPassesTestMixin):
 
 class LecturerProfile(View, LoginRequiredMixin):
 
-    def get(self, request, *args, **kwargs):
-        user = get_object_or_404(Lecturer, user__username=self.request.user.username)
-        projects = Project.objects.filter(lecturer=user)
-        letters = MotivationLetters.objects.filter(project__in=projects, status='processing')
-        context = {'projects' : projects, 'letters': letters}
-        return render(request, 'registration/profileLecturer.html', context)
-    
     def post(self, request, *args, **kwargs):
         if not canDo(self.request.user,'change_status_motivationletters'):
-            return redirect(request.path)
+            return redirect('home')
         letter_id = request.POST.get('letter_id')
         try:
             letter = MotivationLetters.objects.get(id=letter_id)

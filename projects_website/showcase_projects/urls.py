@@ -10,7 +10,7 @@ from .views import (
 from .viewsAdministrator import (
     AdministratorOrderAcceptanceView,
     AdministratorProjectCreateView,
-    AdministratorOrderDeleteView
+    AdministratorOrderDeleteView,
 )
 
 from .viewsCustomer import (
@@ -50,7 +50,9 @@ urlpatterns = [
     path('order/<int:pk>/update/', OrderUpdateView.as_view(), name='order-update'),
     path('order/<int:pk>/delete/', OrderDeleteView.as_view(), name='order-delete'),
     #administrator
+    
     path('administrator/', AdministratorOrderAcceptanceView.as_view(), name='administrator'),
     path('project/new/<int:pk>/', AdministratorProjectCreateView.as_view(), name='project-create'),
+    path('project/<int:pk>/delete/', AdministratorProjectCreateView.as_view(), name='project-delete'),
     path('administrator/order/<int:pk>/delete/', AdministratorOrderDeleteView.as_view(), name='administrator-order-delete'),
 ]

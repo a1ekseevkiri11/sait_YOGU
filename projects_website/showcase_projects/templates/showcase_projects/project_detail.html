@@ -16,6 +16,10 @@
                 {{ project.order.customer.user.username }}
             </p>
             <p class="card-text">
+                <strong>Описание: </strong>
+                {{ project.order.description }}
+            </p>
+            <p class="card-text">
                 <strong>Руководитель: </strong>
                 {{ project.lecturer.user.username }}
             </p>
@@ -38,11 +42,13 @@
                     {{ type.title }}{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </p>
-            {% if project.participation_set.all|length > 0 %}
-                <p>Участники проекта</p>
-                {% for participation in project.participation_set.all %}
-                    <li>{{ participation.student }}</li>
-                {% endfor %}
+            {% if user.administrator or user.lecturer == project.lecturer or studentInThisProject %}
+                {% if project.participation_set.all|length > 0 %}
+                    <p>Участники проекта</p>
+                    {% for participation in project.participation_set.all %}
+                        <li>{{ participation.student }}</li>
+                    {% endfor %}
+                {% endif %}
             {% endif %}
             <br>
         </div>
@@ -50,11 +56,13 @@
     
     {% if user.is_authenticated %}
         {% if studentInThisProject %}
-        <h3>
-            <button type="button"  class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal">
-                Выйти из проекта
-            </button>
-        </h3>
+            {% if studentCanExitProject %}
+                <h3>
+                    <button type="button"  class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                        Выйти из проекта
+                    </button>
+                </h3>
+            {% endif %}
         {% elif studentInProject  %}
         <h3>
             Вы учавствуете в другом проекте
@@ -112,10 +120,7 @@
         </div>
     {% endif %}
     
-    {% if project.order.customer == user.customer and not project.order.status == "accepted" %}
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'order-update' project.id %}">Редактировать</a>
-        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'order-delete' project.id %}">Удалить</a>
-    {% endif %}
+    
     {% if user.lecturer %}
         {% if project.lecturer == user.lecturer %}
             {% if letters %}
@@ -127,6 +132,10 @@
                 <p>Мотивационных писем нет</p>
             {% endif%}
         {% endif%}
+    {% endif %}
+    {% if user.administrator %}
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'project-create' project.order.id %}">Редактировать</a>
+        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'administrator-order-delete' project.order.id %}">Удалить</a>
     {% endif %}
 </article>
 

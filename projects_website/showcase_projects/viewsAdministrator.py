@@ -98,7 +98,5 @@ class AdministratorOrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, Dele
     success_url = reverse_lazy('administrator')
 
     def test_func(self):
-        if self.request.user.groups.filter(name='administrator').exists():
-            return True
-
+        return self.request.user.groups.filter(name='administrator').exists()
 

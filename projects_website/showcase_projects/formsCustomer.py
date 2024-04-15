@@ -29,5 +29,5 @@ class OrderForm(forms.ModelForm):
     
     class Meta:
         model = Order
-        fields = ['title', 'directionIdentity', 'spheres', 'types']
+        fields = ['title', 'description', 'directionIdentity', 'spheres', 'types']
     

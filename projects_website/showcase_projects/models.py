@@ -54,7 +54,7 @@ class Types(models.Model):
 
 class Order(ModelWithStatus):
     title = models.CharField(max_length=100)
-    # description = models.TextField()
+    description = models.TextField()
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
     directionIdentity = models.ManyToManyField(DirectionIdentity)
     spheres = models.ManyToManyField(Spheres)
@@ -135,7 +135,7 @@ class MotivationLetters(ModelWithStatus):
 
 
 class TimePermission(models.Model):
-
+    title = models.CharField(max_length=100)
     permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     time_start = models.DateTimeField()

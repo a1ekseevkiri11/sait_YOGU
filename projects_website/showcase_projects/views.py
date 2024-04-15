@@ -96,6 +96,8 @@ class ProjectDetailView(DetailView, UserPassesTestMixin):
                 context['canAddToProject'] = True
                 context['studentInProject'] = Participation.objects.filter(student=student).exists()
                 context['studentInThisProject'] = project.studentInThisProject(student)
+                context['studentCanExitProject'] = canDo(self.request.user, 'delete_participation')
+            
             
             if canDo(self.request.user, 'add_motivationletters'):
                 context['motivation_form'] =  MotivationLettersForm()
