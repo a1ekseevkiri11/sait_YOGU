@@ -21,7 +21,8 @@ from .viewsCustomer import (
 )
 
 from .viewsLecturer import (
-    LecturerProject
+    LecturerProject,
+    LecturerMotivationLetter
 )
 
 from .viewsStudent import (

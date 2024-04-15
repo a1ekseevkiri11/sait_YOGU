@@ -28,6 +28,11 @@ def update_user_profile(sender, instance, action, **kwargs):
 
         if instance.groups.filter(name='customer').exists():
             Customer.objects.get_or_create(user=instance)
+
+        if instance.groups.filter(name='administrator').exists():
+            Administrator.objects.get_or_create(user=instance)
+
+        
     
     elif action == 'post_remove':
         if not instance.groups.filter(name='student').exists(): 
@@ -38,6 +43,9 @@ def update_user_profile(sender, instance, action, **kwargs):
 
         if not instance.groups.filter(name='customer').exists():
             Customer.objects.filter(user=instance).delete()
+
+        if not instance.groups.filter(name='administrator').exists():
+            Administrator.objects.filter(user=instance).delete()
 
 
 
@@ -50,4 +58,7 @@ class Customer(Profile):
 
 
 class Lecturer(Profile):
+    pass
+
+class Administrator(Profile):
     pass

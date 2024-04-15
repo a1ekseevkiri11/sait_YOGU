@@ -32,6 +32,7 @@ class AdministratorOrderAcceptanceView(ListView, LoginRequiredMixin, UserPassesT
     model = Order
     template_name = 'showcase_projects/administrator/acceptanceProjects.html'
     context_object_name = 'orders'
+    paginate_by = 6
     
     def get_queryset(self):
        return Order.objects.filter(status='processing')

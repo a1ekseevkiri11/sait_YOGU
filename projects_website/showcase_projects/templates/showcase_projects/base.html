@@ -42,6 +42,9 @@
                                 </div>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuUser">
                                         <a class="dropdown-item" href="{% url 'home' %}">Витрина проектов</a>
+                                        {% if user.administrator %}
+                                            <a class="dropdown-item" href="{% url 'administrator' %}">Заявки на проект</a>
+                                        {% endif %}
 
                                         {% if user.student %}
                                             <a class="dropdown-item" href="{% url 'project-my' %}">Мой проект</a>

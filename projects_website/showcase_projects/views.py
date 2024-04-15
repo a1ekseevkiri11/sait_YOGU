@@ -89,7 +89,7 @@ class ProjectDetailView(DetailView, UserPassesTestMixin):
         if not self.request.user.is_authenticated:
             return context
         
-        if self.request.user.student:
+        if self.request.user.groups.filter(name='student').exists():
             context['participationProject'] = project.freePlaces()
             if canDo(self.request.user, 'add_participation'):
                 student = self.request.user.student
@@ -99,6 +99,10 @@ class ProjectDetailView(DetailView, UserPassesTestMixin):
             
             if canDo(self.request.user, 'add_motivationletters'):
                 context['motivation_form'] =  MotivationLettersForm()
+
+        if self.request.user.groups.filter(name='lecturer').exists():
+            if self.request.user.lecturer == project.lecturer:
+                context['letters'] = MotivationLetters.objects.filter(project=project, status='processing')
             
         return context
     

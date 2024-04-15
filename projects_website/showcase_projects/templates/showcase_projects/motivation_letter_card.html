@@ -1,19 +1,43 @@
 
 
 <div class="col-md-4 mb-4">
-    <div class="card">
+    <div class="card h-100">
         <div class="card-body">
-            <p class="card-title">Письмо к проекту: 
-                <a href="{% url 'project-detail' letter.project.id %}">{{ letter.project.order.title }}</a>
-            </p>
+            {% if user.lecturer %}
+                {% if user.lecturer == letter.project.lecturer %}
+                <p class="card-title">Письмо студента: {{ letter.student.user.username }}</p>
+                {% endif %}
+            {% endif %}
+            {% if user.student %}
+                <p class="card-title">Письмо к проекту: 
+                    <a href="{% url 'project-detail' letter.project.id %}">{{ letter.project.order.title }}</a>
+                </p>
+                <p class="card-title">
+                    Статус: {{ letter.get_status_display }}
+                </p>
+            {% endif %}
+
+            
             <button class="download-letter-btn btn btn-secondary btn-sm mt-1 mb-1" data-letter-id="{{ letter.id }}" username="{{ letter.student.user.username }}">Скачать письмо</button>
             {% if buttonDeleteMotivationLetter %}
                 <form method="post" action="{% url 'profileStudent' %}">
                     {% csrf_token %}
                     <input type="hidden" name="letter_id" value="{{ letter.id }}">
                     <input type="hidden" name="delete_motivation_letter" value="true">
-                    <button type="submit" class="btn btn-danger btn-sm mt-1 mb-1">Удалить</button>
+                    <button type="submit" class="btn v btn-sm mt-1 mb-1">Удалить</button>
                 </form>
+            {% endif %}
+            {% if user.lecturer %}
+                {% if user.lecturer == letter.project.lecturer %}
+                
+                    <form class="statusForm" method="post" action="{% url 'profileLecturer' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="letter_id" value="{{ letter.id }}">
+                        <br>
+                        <button type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" name="accept">Принять</button>
+                        <button type="submit" class="btn v btn-sm mt-1 mb-1" name="reject">Отклонить</button>
+                    </form>
+                {% endif %}
             {% endif %}
                 
         </div>

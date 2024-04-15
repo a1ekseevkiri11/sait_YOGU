@@ -6,7 +6,7 @@
 <article class="media content-section">
     <div class="media-body">
         <div class="article-metadata">
-            <h5 class="card-title">  {{ project.title }}</h5>
+            <h2 class="card-title">  {{ project.order.title }}</h2>
             <p class="card-text">
                 <strong>Количество свободных мест: </strong>
                 {{ countFreePlace }}/{{ project.place }}
@@ -62,36 +62,13 @@
         {% elif participationProject %}
 
             {% if motivation_form %}
-            <form method="post" action="{% url 'project-detail' pk=project.pk %}" enctype="multipart/form-data" class="needs-validation" novalidate style="max-width: 400px;">
-                {% csrf_token %}
-                <input type="hidden" name="add_motivation_letter" value="true">
-                <div class="mb-3 d-flex">
-                    <div class="input-group flex-nowrap">
-                        <input type="file" class="form-control" id="motivation_letter" name="motivation_letter" required>
-                        <div class="invalid-feedback">Пожалуйста, выберите файл.</div>
-                    </div>
+                <form method="post" action="{% url 'project-detail' pk=project.pk %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <input type="hidden" name="add_motivation_letter" value="true">
+                    {{ motivation_form }}
                     <button type="submit" class="btn btn-primary ms-2">Отправить</button>
-                </div>
-            </form>
-            
-            <script>
-            // Добавляем проверку формы с использованием Bootstrap
-            (function() {
-                'use strict';
-                window.addEventListener('load', function() {
-                    var forms = document.getElementsByClassName('needs-validation');
-                    var validation = Array.prototype.filter.call(forms, function(form) {
-                        form.addEventListener('submit', function(event) {
-                            if (form.checkValidity() === false) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                            form.classList.add('was-validated');
-                        }, false);
-                    });
-                }, false);
-            })();
-            </script>
+                </form>
             {% endif %}
             {% if canAddToProject%}
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmationModal">
@@ -138,6 +115,18 @@
     {% if project.order.customer == user.customer and not project.order.status == "accepted" %}
         <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'order-update' project.id %}">Редактировать</a>
         <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'order-delete' project.id %}">Удалить</a>
+    {% endif %}
+    {% if user.lecturer %}
+        {% if project.lecturer == user.lecturer %}
+            {% if letters %}
+                <p>Мотивационные письма</p>
+                {% for letter in letters %}
+                    {% include "showcase_projects/motivation_letter_card.html" %}
+                {% endfor %}
+            {% else %}
+                <p>Мотивационных писем нет</p>
+            {% endif%}
+        {% endif%}
     {% endif %}
 </article>
 

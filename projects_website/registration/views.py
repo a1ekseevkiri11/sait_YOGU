@@ -32,6 +32,7 @@ from showcase_projects.models import (
 )
 
 from showcase_projects.permission import (
+    canDo,
     canAddProject,
     canChangeStatusMotivationLetters,
     canDeleteMotivationLetters
@@ -90,7 +91,7 @@ class LecturerProfile(View, LoginRequiredMixin):
         return render(request, 'registration/profileLecturer.html', context)
     
     def post(self, request, *args, **kwargs):
-        if not canChangeStatusMotivationLetters():
+        if not canDo(self.request.user,'change_status_motivationletters'):
             return redirect(request.path)
         letter_id = request.POST.get('letter_id')
         try:
@@ -101,10 +102,15 @@ class LecturerProfile(View, LoginRequiredMixin):
             
             if 'reject' in request.POST:
                 letter.set_status('rejected')
+            
+            return redirect('project-detail', pk=letter.project.id)
+        
         except:
             pass
+
+        return redirect('home')
                  
-        return redirect(request.path)
+        
     
     
     def test_func(self):
